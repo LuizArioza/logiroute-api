@@ -1,5 +1,7 @@
 package com.logiroute.api.controller;
 
+import com.logiroute.api.domain.Entregador;
+import com.logiroute.api.repository.EntregadorRepository;
 import com.logiroute.api.domain.Pacote;
 import com.logiroute.api.dto.DespacharPacoteRequestDTO;
 import com.logiroute.api.dto.PacoteRequestDTO;
@@ -19,6 +21,7 @@ import java.util.List;
 public class LogisticaController {
 
     private final RoteamentoService roteamentoService;
+    private final EntregadorRepository entregadorRepository;
 
     /**
      * Cadastra um novo pacote no sistema.
@@ -68,5 +71,15 @@ public class LogisticaController {
 
         Pacote despachado = roteamentoService.despacharPacote(id, request.entregadorId());
         return ResponseEntity.ok(PacoteResponseDTO.fromEntity(despachado));
+    }
+    /**
+     * Cadastra um novo entregador no sistema.
+     * POST /api/entregadores
+     */
+    @PostMapping("/entregadores")
+    public ResponseEntity<Entregador> cadastrarEntregador(
+            @RequestBody Entregador entregador) {
+        Entregador salvo = entregadorRepository.save(entregador);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 }
