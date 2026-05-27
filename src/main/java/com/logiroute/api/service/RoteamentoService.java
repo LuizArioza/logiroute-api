@@ -1,5 +1,6 @@
 package com.logiroute.api.service;
-
+import com.logiroute.api.exception.BusinessException;
+import com.logiroute.api.exception.ResourceNotFoundException;
 import com.logiroute.api.domain.Entregador;
 import com.logiroute.api.domain.Pacote;
 import com.logiroute.api.domain.enums.StatusPacote;
@@ -41,10 +42,10 @@ public class RoteamentoService {
     public Pacote despacharPacote(Long pacoteId, Long entregadorId) {
 
         Pacote pacote = pacoteRepository.findById(pacoteId)
-                .orElseThrow(() -> new RuntimeException("Pacote não encontrado: " + pacoteId));
+                .orElseThrow(() -> new ResourceNotFoundException("Pacote", pacoteId));
 
         Entregador entregador = entregadorRepository.findById(entregadorId)
-                .orElseThrow(() -> new RuntimeException("Entregador não encontrado: " + entregadorId));
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador", entregadorId));
 
         validarCapacidadePeso(pacote, entregador);
 
@@ -74,7 +75,7 @@ public class RoteamentoService {
 
     private void validarCapacidadePeso(Pacote pacote, Entregador entregador) {
         if (pacote.getPesoKg() > entregador.getCapacidadeMaximaKg()) {
-            throw new RuntimeException(
+            throw new BusinessException(
                     "Peso do pacote (%.1fkg) excede a capacidade do entregador (%.1fkg)"
                             .formatted(pacote.getPesoKg(), entregador.getCapacidadeMaximaKg())
             );
